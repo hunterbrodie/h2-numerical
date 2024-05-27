@@ -27,16 +27,20 @@ r_size = int(input())
 #print("Enter Internuclear Grid Size")
 #t_size = int(input())
 
-h = r_max / r_size
+precision = 5
 
-print(h)
+h = np.around(r_max / r_size, precision)
 
 coords = set()
 
 for i in range(r_size):
-    print(i * h, end =", ")
-    print(2 * c + i * h - abs(2 * c - i * h))
+    r = np.around(i * h, precision)
+    mi = np.around(abs(2 * c - r), precision)
+    ma = np.around(2 * c + r, precision)
+    print(r, end =", ")
+    print(mi, end=", ")
+    print(ma, end=", ")
+    print(np.around((ma - mi) / h, precision))
 
 
 sorted_coords = sorted(coords, key=lambda element: (element[0], element[1]))
-print(sorted_coords)
