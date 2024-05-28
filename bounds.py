@@ -37,10 +37,12 @@ for i in range(r_size):
     r = np.around(i * h, precision)
     mi = np.around(abs(2 * c - r), precision)
     ma = np.around(2 * c + r, precision)
-    print(r, end =", ")
-    print(mi, end=", ")
-    print(ma, end=", ")
-    print(np.around((ma - mi) / h, precision))
+    distance = int((ma - mi) / h)
+    for j in range(distance + 1):
+        s = mi + h * j
+        coords.add((r, s))
+        coords.add((s, r))
 
 
 sorted_coords = sorted(coords, key=lambda element: (element[0], element[1]))
+print(sorted_coords)
