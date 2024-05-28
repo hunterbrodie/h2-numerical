@@ -17,9 +17,10 @@ def s(x, y, c):
 def bounds(r1, s1, r2, s2, c):
     return (np.linalg.norm([x(r1, s1, c) - x(r2, s2, c), y(r1, s1, c) - y(r2, s2, c)]), np.linalg.norm([x(r1, s1, c) - x(r2, s2, c), y(r1, s1, c) + y(r2, s2, c)]))
 
+precision = 5
 
 print("Enter C")
-c = int(input())
+c = np.around(float(input()), precision)
 print("Enter Radial Cutoff")
 r_max = int(input())
 print("Enter Radial Grid Size")
@@ -27,7 +28,6 @@ r_size = int(input())
 #print("Enter Internuclear Grid Size")
 #t_size = int(input())
 
-precision = 5
 
 h = np.around(r_max / r_size, precision)
 
@@ -38,11 +38,13 @@ for i in range(r_size):
     mi = np.around(abs(2 * c - r), precision)
     ma = np.around(2 * c + r, precision)
     distance = int((ma - mi) / h)
+    print(distance)
     for j in range(distance + 1):
-        s = mi + h * j
+        s = np.around(mi + h * j, precision)
         coords.add((r, s))
         coords.add((s, r))
 
 
 sorted_coords = sorted(coords, key=lambda element: (element[0], element[1]))
 print(sorted_coords)
+print(len(sorted_coords))
