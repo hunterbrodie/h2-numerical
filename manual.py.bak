@@ -1,0 +1,79 @@
+from sympy import *
+
+x1, x2, y1, y2, z1, z2, c = symbols("x_1 x_2 y_1 y_2 z_1 z_2 c")
+r1, s1, r2, s2, t, a = symbols("r_1 s_1 r_2 s_2 t theta", positive = True, real = True)
+
+f = Function('f')(r1, s1, r2, s2, t, a)
+
+r1_trans = sqrt((x1+c)**2+y1**2+z1**2).expand()
+s1_trans = sqrt((x1-c)**2+y1**2+z1**2).expand()
+r2_trans = sqrt((x2+c)**2+y2**2+z2**2).expand()
+s2_trans = sqrt((x2-c)**2+y2**2+z2**2).expand()
+t_trans = sqrt((x1-x2)**2+(y1-y2)**2+(z1-z2)**2).expand()
+angle_trans = atan((z1 + z2)/(y1+y2))
+
+def dr(x, r, r_trans):
+    return diff(r_trans, x, x).subs([(r_trans, r)])
+
+def ds(x, s, s_trans):
+    return diff(s_trans, x, x).subs([(s_trans, s)])
+
+def dt(x):
+    return diff(t_trans, x, x).subs([(t_trans, t)])
+
+def da(x):
+    return diff(angle_trans, x, x).subs([(angle_trans, a)])
+
+def drds(x, r, s, r_trans, s_trans):
+    return (2 * diff(r_trans, x) * diff(s_trans, x)).subs([(r_trans, r), (s_trans, s)])
+
+def drda(x, r, r_trans, angle_trans):
+    return (2 * diff(r_trans, x) * diff(angle_trans, x))
+
+def drdt(x, r, r_trans):
+    return (2 * diff(r_trans, x) * diff(t_trans, x)).subs([(r_trans, r), (t_trans, t)])
+
+def dsdt(x, s, s_trans):
+    return (2 * diff(s_trans, x) * diff(t_trans, x)).subs([(s_trans, s), (t_trans, t)])
+
+def drdr(x, r_trans):
+    return diff(r_trans, x)**2
+
+def dsds(x, s_trans):
+    return diff(s_trans, x)**2
+
+def dtdt(x):
+    return diff(t_trans, x)**2
+
+def dada(x):
+    return diff(angle_trans, x)**2
+
+def dadt(x):
+    return (2 * diff(t_trans, x) * diff(angle_trans, x))
+
+#soln = dada(y1) + dada(z1) + dada(z2) + dada(y2)
+preview(soln.simplify(), output='png', viewer='feh')
+
+def full_laplace(x1, y1, z1, r1, s1, r1_trans, s1_trans, x2, y2, z2, r2, s2, r2_trans, s2_trans):
+    dr_coeff = (dr(x1, r1, r1_trans) + dr(y1, r1, r1_trans) + dr(z1, r1, r1_trans)).expand().factor().subs(-r1_trans**2, -r1**2) * Derivative(f, r1)
+    ds_coeff = (ds(x1, s1, s1_trans) + ds(y1, s1, s1_trans) + ds(z1, s1, s1_trans)).expand().factor().subs(-s1_trans**2, -s1**2) * Derivative(f, s1)
+    dt_coeff = (dt(x1) + dt(y1) + dt(z1)).expand().factor().subs(-t_trans**2, -t**2) * Derivative(f, t)
+
+    drdr_coeff = (drdr(x1, r1_trans) + drdr(y1, r1_trans) + drdr(z1, r1_trans)).simplify() * Derivative(f, r1, r1)
+    dsds_coeff = (dsds(x1, s1_trans) + dsds(y1, s1_trans) + dsds(z1, s1_trans)).simplify() * Derivative(f, s1, s1)
+    dtdt_coeff = (dtdt(x1) + dtdt(y1) + dtdt(z1)).simplify() * Derivative(f, t, t)
+
+    drds_coeff = (drds(x1, r1, s1, r1_trans, s1_trans) + drds(y1, r1, s1, r1_trans, s1_trans) + drds(z1, r1, s1, r1_trans, s1_trans)
+                  ).simplify().subs([(y1**2, r1**2-z1**2-(x1+c)**2), (x1, (r1**2-s1**2) / 4 / c)]).simplify() * Derivative(f, r1, s1)
+    drdt_coeff = (drdt(x1, r1, r1_trans) + drdt(y1, r1, r1_trans) + drdt(z1, r1, r1_trans) +\
+            drdt(x2, r1, r1_trans) + drdt(y2, r1, r1_trans) + drdt(z2, r1, r1_trans)
+            ).factor().subs([((t_trans**2 + r1_trans**2 - r2_trans**2) / 2, (t**2 + r1**2 - r2**2) / 2)]).simplify() * Derivative(f, r1, t)
+
+    dsdt_coeff = (dsdt(x1, s1, s1_trans) + dsdt(y1, s1, s1_trans) + dsdt(z1, s1, s1_trans) +\
+            dsdt(x2, s1, s1_trans) + dsdt(y2, s1, s1_trans) + dsdt(z2, s1, s1_trans)
+            ).factor().subs([((t_trans**2 + s1_trans**2 - s2_trans**2) / 2, (t**2 + s1**2 - s2**2) / 2)]).simplify() * Derivative(f, s1, t)
+    return dr_coeff + ds_coeff + dt_coeff + drdr_coeff + dsds_coeff + dtdt_coeff + drds_coeff + drdt_coeff + dsdt_coeff
+
+
+#print(latex((full_laplace(x1, y1, z1, r1, s1, r1_trans, s1_trans, x2, y2, z2, r2, s2, r2_trans, s2_trans) +\
+#            full_laplace(x2, y2, z2, r2, s2, r2_trans, s2_trans, x1, y1, z1, r1, s1, r1_trans, s1_trans))simplify().subs(f,Symbol(''))))

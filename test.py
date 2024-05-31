@@ -54,26 +54,13 @@ def full():
            mixed(t_trans, s_trans(car[1])).simplify().subs([(r_trans(car[1]), r2), (t_trans, t)]).factor().subs([((-t_trans**2 + s_trans(car[0])**2 - s_trans(car[1])**2) / 2, (-t**2 + s1**2 - s2**2) / 2)]).simplify() * Derivative(f, s1, t) + \
            mixed(t_trans, s_trans(car[0])).simplify().subs([(r_trans(car[0]), r1), (t_trans, t)]).factor().subs([((t_trans**2 + s_trans(car[0])**2 - s_trans(car[1])**2) / 2, (t**2 + s1**2 - s2**2) / 2)]).simplify() * Derivative(f, s1, t) + \
            mixed(t_trans, r_trans(car[0])).simplify().subs([(r_trans(car[0]), r1), (t_trans, t)]).factor().subs([((t_trans**2 + r_trans(car[0])**2 - r_trans(car[1])**2) / 2, (t**2 + r1**2 - r2**2) / 2)]).simplify() * Derivative(f, r1, t) + \
-           mixed(t_trans, r_trans(car[1])).simplify().subs([(r_trans(car[1]), r2), (t_trans, t)]).factor().subs([((t_trans**2 + r_trans(car[1])**2 - r_trans(car[0])**2) / 2, (t**2 + r2**2 - r1**2) / 2)]).simplify() * Derivative(f, r2, t) + \
+           mixed(t_trans, r_trans(car[1])).simplify().subs([(r_trans(car[1]), r2), (t_trans, t)]).factor().subs([((t_trans**2 + r_trans(car[1])**2 - r_trans(car[0])**2) / 2, (t**2 + r2**2 - r1**2) / 2)]).simplify() * Derivative(f, r2, t)
 
-
-phi = acos(y1/sqrt(y1**2+z1**2))
-phi12 = acos(y2/sqrt(y2**2+z2**2)) - acos(y1/sqrt(y1**2+z1**2))
+phi = atan((z1+z2)/(y1+y2))
 soln = first(phi, a)
-#soln = first(phi12, a)
-#soln = second(phi).subs([(y1**2+z1**2, r1**2-((r1**2-s1**2)/4/c+c)**2)]).simplify()
-soln = second(phi12).factor().subs([(y1**2+z1**2, r1**2-((r1**2-s1**2)/4/c+c)**2)]).subs([(y2**2+z2**2, r2**2-((r2**2-s2**2)/4/c+c)**2)]).simplify()
-#soln = mixed(phi, phi12).subs([(y1**2+z1**2, r1**2-((r1**2-s1**2)/4/c+c)**2)]).simplify()
-#soln = mixed(phi, r_trans(car[0]))
-#soln = mixed(phi, r_trans(car[1]))
-#soln = mixed(phi, s_trans(car[0]))
-#soln = mixed(phi, s_trans(car[1]))
-
-#soln = mixed(phi12, r_trans(car[0]))
-#soln = mixed(phi12, r_trans(car[1]))
-#soln = mixed(phi12, s_trans(car[0]))
-#soln = mixed(phi12, s_trans(car[1]))
-
+#soln = second(phi).subs([(y1**2+z1**2, r1**2-((r1**2-s1**2)/4/c + c)**2)]).simplify()
+#soln = mixed(phi, t_trans).simplify().subs([(t_trans, t), (y1**2+z1**2, r1**2-((r1**2-s1**2)/4/c + c)**2)])
+soln = mixed(phi, r_trans(car[0])).simplify()
 
 preview(soln, output='png', viewer='feh')
 
