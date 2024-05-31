@@ -1,15 +1,16 @@
 from sympy import *
 
 x1, x2, y1, y2, z1, z2, c = symbols("x_1 x_2 y_1 y_2 z_1 z_2 c")
-r1, s1, r2, s2, t, a = symbols("r_1 s_1 r_2 s_2 t phi", positive = True, real = True)
+r1, s1, r2, s2, t, p, p12 = symbols("r_1 s_1 r_2 s_2 t phi phi_12", positive = True, real = True)
 
-f = Function('f')(r1, s1, r2, s2, t, a)
+f = Function('f')(r1, s1, r2, s2, p, p12)
 
 def r_trans(car):
     return sqrt((car[0]+c)**2+car[1]**2+car[2]**2).expand()
 def s_trans(car):
     return sqrt((car[0]+c)**2+car[1]**2+car[2]**2).expand()
-t_trans = sqrt((x1-x2)**2+(y1-y2)**2+(z1-z2)**2).expand()
+phi = acos(y1/sqrt(y1**2+z1**2))
+phi12 = acos(y2/sqrt(y2**2+z2**2)) - acos(y1/sqrt(y1**2+z1**2))
 
 car = [[x1, y1, z1], [x2, y2, z2]]
 earthquake = [[r1, s1], [r2, s2]]
@@ -43,40 +44,25 @@ def full():
            first(s_trans(car[0]), s1) * Derivative(f, s1) + \
            first(r_trans(car[1]), r2) * Derivative(f, r2) + \
            first(s_trans(car[1]), s2) * Derivative(f, s2) + \
-           first(t_trans, t) * Derivative(f, t) + \
            second(r_trans(car[0])) * Derivative(f, r1, r1) + \
            second(s_trans(car[0])) * Derivative(f, s1, s1) + \
            second(r_trans(car[1])) * Derivative(f, r2, r2) + \
            second(s_trans(car[1])) * Derivative(f, s2, s2) + \
-           second(t_trans) * Derivative(f, t, t) + \
            mixed(r_trans(car[0]), s_trans(car[0])) * Derivative(f, r1, s1) + \
            mixed(r_trans(car[1]), s_trans(car[1])) * Derivative(f, r2, s2) + \
-           mixed(t_trans, s_trans(car[1])).simplify().subs([(r_trans(car[1]), r2), (t_trans, t)]).factor().subs([((-t_trans**2 + s_trans(car[0])**2 - s_trans(car[1])**2) / 2, (-t**2 + s1**2 - s2**2) / 2)]).simplify() * Derivative(f, s1, t) + \
-           mixed(t_trans, s_trans(car[0])).simplify().subs([(r_trans(car[0]), r1), (t_trans, t)]).factor().subs([((t_trans**2 + s_trans(car[0])**2 - s_trans(car[1])**2) / 2, (t**2 + s1**2 - s2**2) / 2)]).simplify() * Derivative(f, s1, t) + \
-           mixed(t_trans, r_trans(car[0])).simplify().subs([(r_trans(car[0]), r1), (t_trans, t)]).factor().subs([((t_trans**2 + r_trans(car[0])**2 - r_trans(car[1])**2) / 2, (t**2 + r1**2 - r2**2) / 2)]).simplify() * Derivative(f, r1, t) + \
-           mixed(t_trans, r_trans(car[1])).simplify().subs([(r_trans(car[1]), r2), (t_trans, t)]).factor().subs([((t_trans**2 + r_trans(car[1])**2 - r_trans(car[0])**2) / 2, (t**2 + r2**2 - r1**2) / 2)]).simplify() * Derivative(f, r2, t) + \
+           first(phi, p) * Derivative(f, p) + \
+           first(phi12, p12) * Derivative(f, p12) + \
+           second(phi).subs([(y1**2+z1**2, r1**2-((r1**2-s1**2)/4/c+c)**2)]).simplify() * Derivative(f, p, p) + \
+           second(phi12).factor().subs([(y1**2+z1**2, r1**2-((r1**2-s1**2)/4/c+c)**2)]).subs([(y2**2+z2**2, r2**2-((r2**2-s2**2)/4/c+c)**2)]).simplify() * Derivative(f, p12, p12) + \
+           mixed(phi, phi12).subs([(y1**2+z1**2, r1**2-((r1**2-s1**2)/4/c+c)**2)]).simplify() * Derivative(f, p, p12) + \
+           mixed(phi, r_trans(car[0])) * Derivative(f, r1, p) + \
+           mixed(phi, r_trans(car[1])) * Derivative(f, r2, p) + \
+           mixed(phi, s_trans(car[0])) * Derivative(f, s1, p) + \
+           mixed(phi, s_trans(car[1])) * Derivative(f, s2, p) + \
+           mixed(phi12, r_trans(car[0])) * Derivative(f, p12, r1) + \
+           mixed(phi12, r_trans(car[1])) * Derivative(f, p12, r2) + \
+           mixed(phi12, s_trans(car[0])) * Derivative(f, p12, s1) + \
+           mixed(phi12, s_trans(car[1])) * Derivative(f, p12, s2)
 
-
-phi = acos(y1/sqrt(y1**2+z1**2))
-phi12 = acos(y2/sqrt(y2**2+z2**2)) - acos(y1/sqrt(y1**2+z1**2))
-soln = first(phi, a)
-#soln = first(phi12, a)
-#soln = second(phi).subs([(y1**2+z1**2, r1**2-((r1**2-s1**2)/4/c+c)**2)]).simplify()
-soln = second(phi12).factor().subs([(y1**2+z1**2, r1**2-((r1**2-s1**2)/4/c+c)**2)]).subs([(y2**2+z2**2, r2**2-((r2**2-s2**2)/4/c+c)**2)]).simplify()
-#soln = mixed(phi, phi12).subs([(y1**2+z1**2, r1**2-((r1**2-s1**2)/4/c+c)**2)]).simplify()
-#soln = mixed(phi, r_trans(car[0]))
-#soln = mixed(phi, r_trans(car[1]))
-#soln = mixed(phi, s_trans(car[0]))
-#soln = mixed(phi, s_trans(car[1]))
-
-#soln = mixed(phi12, r_trans(car[0]))
-#soln = mixed(phi12, r_trans(car[1]))
-#soln = mixed(phi12, s_trans(car[0]))
-#soln = mixed(phi12, s_trans(car[1]))
-
-
-preview(soln, output='png', viewer='feh')
-
-#preview(full().subs(f, Symbol('')), output='png', viewer='feh')
-#print(latex((full_laplace(x1, y1, z1, r1, s1, r1_trans, s1_trans, x2, y2, z2, r2, s2, r2_trans, s2_trans) +\
-#            full_laplace(x2, y2, z2, r2, s2, r2_trans, s2_trans, x1, y1, z1, r1, s1, r1_trans, s1_trans))simplify().subs(f,Symbol(''))))
+preview(full().subs(f, Symbol('')), output='png', viewer='feh')
+print(latex(full().simplify().subs(f,Symbol(''))))
