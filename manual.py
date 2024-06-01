@@ -64,5 +64,5 @@ def full():
            mixed(phi12, s_trans(car[0])) * Derivative(f, p12, s1) + \
            mixed(phi12, s_trans(car[1])) * Derivative(f, p12, s2)
 
-preview(full().subs(f, Symbol('')), output='png', viewer='feh')
-print(latex(full().simplify().subs(f,Symbol(''))))
+#preview(full().subs(f, Symbol('')), output='png', viewer='feh')
+#print(latex(full().simplify().subs(f,Symbol(''))))

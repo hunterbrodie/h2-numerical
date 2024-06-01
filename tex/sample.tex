@@ -27,4 +27,13 @@
   H=\frac{p_1p_2}{2c} + \frac{e_1e_2}{t} -\frac{2}{t}\frac{\partial}{\partial t} - \frac{\partial^2}{\partial t^2} + \frac{s_1^2-s_2^2-t^2}{2s_2t}\frac{\partial^2}{\partial t\partial s_2} + \frac{s_2^2-s_1^2-t^2}{2s_1t}\frac{\partial^2}{\partial t\partial s_1}  + \frac{r_1^2-r_2^2-t^2}{2r_2t}\frac{\partial^2}{\partial t\partial r_2} + \frac{r_2^2-r_1^2-t^2}{2r_1t}\frac{\partial^2}{\partial t\partial r_1} \\
   + \sum_{i=1}^2 -\frac{e_ip_1}{r_i} -\frac{e_ip_2}{s_i} - \frac{1}{2}\frac{\partial^2}{\partial r_i^2}- \frac{1}{2}\frac{\partial^2}{\partial s_i^2} - \frac{1}{r_i}\frac{\partial}{\partial r_i} - \frac{1}{s_i}\frac{\partial}{\partial s_i} - \frac{r_i^2+s_i^2-4c^2}{2r_is_i}\frac{\partial^2}{\partial s_i\partial r_i}
 \end{align*}
+
+\begin{align*}
+  r_1=\sqrt{(x_1+c)^2+y_1^2+z_1^2}\\
+  s_1=\sqrt{(x_1-c)^2+y_1^2+z_1^2}\\
+  r_2=\sqrt{(x_2+c)^2+y_2^2+z_2^2}\\
+  s_2=\sqrt{(x_2-c)^2+y_2^2+z_2^2}\\
+  \varphi=\arccos{\frac{y_1}{\sqrt{y_1^2+z_1^2}}}\\
+  \varphi_{12}=\arccos{\frac{y_2}{\sqrt{y_2^2+z_2^2}}} - \arccos{\frac{y_1}{\sqrt{y_1^2+z_1^2}}}
+\end{align*}
 \end{document}
